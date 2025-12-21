@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hm_shop/components/Home/Category.dart';
+import 'package:hm_shop/components/Home/HomeSlider.dart';
+import 'package:hm_shop/components/Home/Hot.dart';
+import 'package:hm_shop/components/Home/MoreList.dart';
+import 'package:hm_shop/components/Home/Suggestion.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,8 +13,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Widget> _getScrollChildren() {
+    return <Widget>[
+      SliverToBoxAdapter(child: HomeSlider()),
+      SliverToBoxAdapter(child: SizedBox(height: 20)),
+      SliverToBoxAdapter(child: Category()),
+      SliverToBoxAdapter(child: SizedBox(height: 20)),
+      SliverToBoxAdapter(child: Suggestion()),
+      SliverToBoxAdapter(child: SizedBox(height: 20)),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Flex(
+            direction: Axis.horizontal,
+            children: [
+              Expanded(child: Hot()),
+              SizedBox(width: 10),
+              Expanded(child: Hot()),
+            ],
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 20)),
+      MoreList(),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text('Home Page')));
+    return CustomScrollView(slivers: _getScrollChildren());
   }
 }
