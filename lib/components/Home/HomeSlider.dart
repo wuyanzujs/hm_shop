@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hm_shop/types/home.dart';
 
 class HomeSlider extends StatefulWidget {
-  final List<BannerList> bannerList;
+  final List<BannerItem> bannerList;
   const HomeSlider({super.key, required this.bannerList});
 
   @override
@@ -49,17 +49,6 @@ class _HomeSliderState extends State<HomeSlider> {
                   color: Colors.grey,
                 ),
               ),
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulatedBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
             ),
           )
           .toList(),
