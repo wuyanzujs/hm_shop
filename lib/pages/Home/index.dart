@@ -34,6 +34,9 @@ class _HomePageState extends State<HomePage> {
     subTypes: [],
   );
 
+  // 推荐列表
+  List<GoodDetailItem> _recommendList = [];
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +45,19 @@ class _HomePageState extends State<HomePage> {
     _loadHotRecommend();
     _getInVogueList();
     _getOneStopList();
+    _getRecommendList();
+    _registerEvent();
+  }
+
+  // 监听滚动事件
+  void _registerEvent() {
+    _controller.addListener(() {
+      if (_controller.position.pixels >=
+          _controller.position.maxScrollExtent - 50) {
+        print("触底");
+        _getRecommendList();
+      }
+    });
   }
 
   // 调用 API 获取轮播图数据
@@ -74,6 +90,29 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  int _page = 1; // 当前页码
+  int _limit = 10; // 每页数量
+  bool _hasMore = true; // 是否有更多数据
+  bool _isLoading = false; // 是否正在加载
+  // 获取推荐列表
+  void _getRecommendList() async {
+    // 判断是否正在加载或没有更多数据
+    if (_isLoading || !_hasMore) return;
+    _isLoading = true;
+    int requestLength = _limit * _page;
+    _recommendList = await HomeApi.getRecommendListAPI({
+      "limit": requestLength,
+    });
+    _isLoading = false;
+    _hasMore = _recommendList.length >= requestLength;
+    setState(() {});
+    if (_recommendList.length < requestLength) {
+      _hasMore = false;
+      return;
+    }
+    _page++;
+  }
+
   List<Widget> _getScrollChildren() {
     return <Widget>[
       SliverToBoxAdapter(child: HomeSlider(bannerList: bannerList)),
@@ -100,12 +139,16 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 20)),
-      MoreList(),
+      HmMoreList(recommendList: _recommendList), // 无限滚动列表
     ];
   }
 
+  final ScrollController _controller = ScrollController();
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(slivers: _getScrollChildren());
+    return CustomScrollView(
+      controller: _controller,
+      slivers: _getScrollChildren(),
+    );
   }
 }
