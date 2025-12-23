@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class HMToast {
+  static bool _isShow = false;
   static void show(BuildContext context, String? message) {
+    if (HMToast._isShow) return;
+    HMToast._isShow = true;
+    Future.delayed(Duration(seconds: 3), () {
+      HMToast._isShow = false;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         width: 180,
