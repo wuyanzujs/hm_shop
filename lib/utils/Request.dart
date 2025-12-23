@@ -47,59 +47,64 @@ class Request {
     }
   }
 
-  Future<dynamic> get(
+  // 静态方法 - 避免重复调用工厂构造函数
+  static Future<dynamic> get(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return _handleResponse(
-      _dio.get(path, queryParameters: queryParameters, options: options),
-    );
-  }
-
-  Future<dynamic> post(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) async {
-    return _handleResponse(
-      _dio.post(
+    return _instance._handleResponse(
+      _instance._dio.get(
         path,
-        data: data,
         queryParameters: queryParameters,
         options: options,
       ),
     );
   }
 
-  Future<dynamic> put(
+  static Future<dynamic> post(
     String path, {
     dynamic data,
-    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? params,
     Options? options,
   }) async {
-    return _handleResponse(
-      _dio.put(
+    return _instance._handleResponse(
+      _instance._dio.post(
         path,
         data: data,
-        queryParameters: queryParameters,
+        queryParameters: params,
         options: options,
       ),
     );
   }
 
-  Future<dynamic> delete(
+  static Future<dynamic> put(
     String path, {
     dynamic data,
-    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? params,
     Options? options,
   }) async {
-    return _handleResponse(
-      _dio.delete(
+    return _instance._handleResponse(
+      _instance._dio.put(
         path,
         data: data,
-        queryParameters: queryParameters,
+        queryParameters: params,
+        options: options,
+      ),
+    );
+  }
+
+  static Future<dynamic> delete(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? params,
+    Options? options,
+  }) async {
+    return _instance._handleResponse(
+      _instance._dio.delete(
+        path,
+        data: data,
+        queryParameters: params,
         options: options,
       ),
     );

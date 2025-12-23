@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hm_shop/apis/login.dart';
+import 'package:hm_shop/types/login.dart';
 import 'package:hm_shop/utils/Toast.dart';
 
 class LoginPage extends StatefulWidget {
@@ -66,6 +68,21 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // login
+  Future<void> _login() async {
+    try {
+      final UserInfo userInfo = await LoginApi.login({
+        "account": _phoneController.text,
+        "password": _codeController.text,
+      });
+      print(userInfo);
+      HMToast.show(context, "登录成功");
+      Navigator.pop(context);
+    } catch (e) {
+      HMToast.show(context, e.toString());
+    }
+  }
+
   // 登录按钮Widget
   Widget _buildLoginButton() {
     return SizedBox(
@@ -76,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
           // 登录逻辑
           if (_formKey.currentState!.validate()) {
             if (_isChecked) {
-              // TODO: 登录逻辑
+              _login();
             } else {
               HMToast.show(context, "请勾选协议");
             }
