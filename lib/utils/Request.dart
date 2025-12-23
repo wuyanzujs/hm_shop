@@ -21,14 +21,19 @@ class Request {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          // TODO: 添加 token 等
           return handler.next(options);
         },
         onResponse: (response, handler) {
           return handler.next(response);
         },
         onError: (error, handler) {
-          return handler.next(error);
+          // return handler.next(error);
+          handler.reject(
+            DioException(
+              requestOptions: error.requestOptions,
+              message: error.response?.data['msg'] ?? '请求失败',
+            ),
+          );
         },
       ),
     );

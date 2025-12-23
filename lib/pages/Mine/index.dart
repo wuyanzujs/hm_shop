@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hm_shop/stores/userStore.dart';
 
 class MinePage extends StatefulWidget {
   MinePage({Key? key}) : super(key: key);
@@ -8,6 +10,8 @@ class MinePage extends StatefulWidget {
 }
 
 class _MineViewState extends State<MinePage> {
+  final UserStore _userStore = Get.put(UserStore());
+
   Widget _buildHeader() {
     return Container(
       decoration: BoxDecoration(
@@ -20,25 +24,39 @@ class _MineViewState extends State<MinePage> {
       padding: const EdgeInsets.only(left: 20, right: 40, top: 80, bottom: 20),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 26,
-            backgroundImage: const AssetImage('lib/assets/goods_avatar.png'),
-            backgroundColor: Colors.white,
-          ),
+          Obx(() {
+            return CircleAvatar(
+              radius: 26,
+              backgroundImage: _userStore.user.value.avatar.isEmpty
+                  ? AssetImage('lib/assets/goods_avatar.png')
+                  : NetworkImage(_userStore.user.value.avatar),
+              backgroundColor: Colors.white,
+            );
+          }),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  child: Text(
-                    '立即登录',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                ),
+                Obx(() {
+                  return GestureDetector(
+                    onTap: () {
+                      if (_userStore.user.value.id.isNotEmpty) {
+                        return;
+                      }
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: Text(
+                      _userStore.user.value.id.isNotEmpty
+                          ? _userStore.user.value.account
+                          : '立即登录',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ),

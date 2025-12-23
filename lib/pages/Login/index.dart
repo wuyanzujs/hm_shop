@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hm_shop/apis/login.dart';
+import 'package:hm_shop/stores/userStore.dart';
 import 'package:hm_shop/types/login.dart';
 import 'package:hm_shop/utils/Toast.dart';
 
@@ -15,6 +18,8 @@ class _LoginPageState extends State<LoginPage> {
       TextEditingController(); // 账号控制器
   final TextEditingController _codeController =
       TextEditingController(); // 密码控制器
+
+  final UserStore _userStore = Get.find<UserStore>();
   // 用户账号Widget
   Widget _buildPhoneTextField() {
     return TextFormField(
@@ -75,11 +80,12 @@ class _LoginPageState extends State<LoginPage> {
         "account": _phoneController.text,
         "password": _codeController.text,
       });
-      print(userInfo);
+      _userStore.updateUserInfo(userInfo);
       HMToast.show(context, "登录成功");
       Navigator.pop(context);
     } catch (e) {
-      HMToast.show(context, e.toString());
+      final errorMsg = e is DioException ? (e.message ?? '请求失败') : e.toString();
+      HMToast.show(context, errorMsg);
     }
   }
 
